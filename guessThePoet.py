@@ -4,13 +4,13 @@ import io
 def extractInputFile(file, path):
 
     location = path + file
-    print(location)
+    # print(location)
     txt = []
     with io.open(location, 'r', encoding='utf-8') as f:
        for line in f:
             txt.append(line)
 
-    print(type(txt))
+    # print(type(txt))
     return txt
 
 
@@ -32,10 +32,10 @@ def unigram(poem, pruningNedded):
             else:
                 unigramDict[word] = 1
     if pruningNedded:
-        print("dict length before pruning: ", len(unigramDict))
+        # print("dict length before pruning: ", len(unigramDict))
         return pruningNotImportantWord(unigramDict)
     else:
-        print("dict length without pruning: ", len(unigramDict))
+        # print("dict length without pruning: ", len(unigramDict))
         return unigramDict
 
 
@@ -71,7 +71,7 @@ def bigram(poem):
 
 def train():
     poets = ["ferdowsi_train.txt", "hafez_train.txt", "molavi_train.txt"]
-    print(poets)
+    # print(poets)
     trainFilePath = "./train_set/"
     poems = []
     for file in poets:
@@ -130,20 +130,26 @@ def bigramCalculator(bigramDictForEachPoem,unigramDictForEachPoem, word, pastWor
 
 # return the biggest number in back off list
 def biggestNumber(list):
-    print(list)
-    maximum = max(list)
-    print("max: ", maximum)
-    for i in range(len(list)):
-        if maximum == list[i]:
-            print("jayegah: ", i+1)
-            return i+1
+    result = False;
+    if len(list) > 0:
+        result = all(elem == list[0] for elem in list)
+    if result:
+        return -1
+    else:
+        # print(list)
+        maximum = max(list)
+        # print("max: ", maximum)
+        for i in range(len(list)):
+            if maximum == list[i]:
+                # print("jayegah: ", i+1)
+                return i+1
 
 
 def test(unigramDictForEachPoem, bigramDictForEachPoem):
-    l1 = 0.3333
-    l2 = 0.3333
-    l3 = 0.3333
-    e = 1e-6
+    l1 = 0.1
+    l2 = 0.2
+    l3 = 0.7
+    e = 1
     path = "./test_set/"
     file = "test_file.txt"
     poems = extractInputFile(file, path)
@@ -154,7 +160,7 @@ def test(unigramDictForEachPoem, bigramDictForEachPoem):
     correctGuessedPoet = 0
     count = 0
     for line in poems:
-        print(line)
+        # print(line)
         words = line.split()
         poetOfThisPoem = int(words[0])
         backOff = [1.0, 1.0, 1.0]
@@ -176,22 +182,22 @@ def test(unigramDictForEachPoem, bigramDictForEachPoem):
                 # print(bigramValueOfThisWordForEachPoet)
                 for i in range(len(backOff)):
                     backOff[i] *= ((l3 * bigramValueOfThisWordForEachPoet[i]) + (l2 * unigramValueOfThisWordForEachPoet[i]) + (l1 * e))
-        print("count: ", count)
+        # print("count: ", count)
         count += 1
         if biggestNumber(backOff) == poetOfThisPoem:
             correctGuessedPoet += 1
 
     correctPercentage = (correctGuessedPoet/count) * 100
+    print("lamnda3: ", l3 , end=" ")
+    print("lamnda2: ", l2 , end=" ")
+    print("lamnda1: ", l1 , end=" ")
+    print("epsilon: ", e)
     print("percentage: ", correctPercentage, "%")
-
 
 
 def main():
     unigramDictForEachPoem, bigramDictForEachPoem = train()
     test(unigramDictForEachPoem, bigramDictForEachPoem)
-
-
-
 
 
 main()
