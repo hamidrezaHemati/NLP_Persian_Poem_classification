@@ -128,11 +128,19 @@ def bigramCalculator(bigramDictForEachPoem,unigramDictForEachPoem, word, pastWor
     return numberOfRepetation
 
 
+# return the biggest number in back off list
+def biggestNumber(list):
+    max = list.max()
+    for i in range(len(list)):
+        if max == list[i]:
+            return i
+
+
 def test(unigramDictForEachPoem, bigramDictForEachPoem):
     l1 = 0.3333
     l2 = 0.3333
     l3 = 0.3333
-    e = 0.0000001
+    e = 1e-6
     path = "./test_set/"
     file = "test_file.txt"
     poems = extractInputFile(file, path)
