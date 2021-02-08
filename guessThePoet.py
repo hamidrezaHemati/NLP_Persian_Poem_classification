@@ -13,7 +13,14 @@ def extractInputFile(file, path):
     return txt
 
 
-def extractUnigram(poem):
+def pruningNotImportantWord(dictionary):
+    for key in list(dictionary.keys()):
+        if dictionary[key] <= 2:
+            del dictionary[key]
+    return dictionary
+
+
+def extractUnigram(poem, pruningNedded):
     unigramDict = dict()
     for line in poem:
         line = line.strip()
@@ -23,25 +30,30 @@ def extractUnigram(poem):
                 unigramDict[word] += 1
             else:
                 unigramDict[word] = 1
+    if pruningNedded:
+        print("dict length before pruning: ", len(unigramDict))
+        return pruningNotImportantWord(unigramDict)
+    else:
+        return unigramDict
 
-    return unigramDict
 
 
 def main():
     poets = ["ferdowsi_train.txt", "hafez_train.txt", "molavi_train.txt"]
     print(poets)
     trainFilePath = "./train_set/"
+
     poems = []
     for file in poets:
         # extractInputFile(file, trainFilePath)
         poems.append(extractInputFile(file, trainFilePath))
+
     unigramDictForEachPoem = list()
     for poem in poems:
-        unigramDictForEachPoem.append(extractUnigram(poem))
+        unigramDictForEachPoem.append(extractUnigram(poem, True))
     for unigramDict in unigramDictForEachPoem:
         print(len(unigramDict))
-        # for key in list(unigramDict.keys()):
-        #     print(key, ":", unigramDict[key])
+
 
 
 main()
