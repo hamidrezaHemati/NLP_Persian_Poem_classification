@@ -2,6 +2,7 @@ import io
 
 
 def extractInputFile(file, path):
+
     location = path + file
     print(location)
     txt = []
@@ -34,6 +35,7 @@ def unigram(poem, pruningNedded):
         print("dict length before pruning: ", len(unigramDict))
         return pruningNotImportantWord(unigramDict)
     else:
+        print("dict length without pruning: ", len(unigramDict))
         return unigramDict
 
 
@@ -60,20 +62,17 @@ def bigram(poem):
                 else:
                     bigramDict[words[i]][words[i-1]] += 1
 
-    print(len(bigramDict))
-    for key, value in bigramDict.items():
-        print(key)
-        print(value)
-        print("********")
+    # print(len(bigramDict))
+    # for key, value in bigramDict.items():
+    #     print(key)
+    #     print(value)
+    #     print("********")
+    return bigramDict
 
-
-
-
-def main():
+def train():
     poets = ["ferdowsi_train.txt", "hafez_train.txt", "molavi_train.txt"]
     print(poets)
     trainFilePath = "./train_set/"
-
     poems = []
     for file in poets:
         # extractInputFile(file, trainFilePath)
@@ -81,16 +80,114 @@ def main():
 
     unigramDictForEachPoem = list()
     for poem in poems:
-        unigramDictForEachPoem.append(unigram(poem, True))
-    for unigramDict in unigramDictForEachPoem:
-        print(len(unigramDict))
+        unigramDictForEachPoem.append(unigram(poem, False))
+    # for unigramDict in unigramDictForEachPoem:
+    #     print(len(unigramDict))
 
-    bigramForEachPoem = list()
+    bigramDictForEachPoem = list()
     bigram(poems[0])
-    # for poem in poems:
-    #     bigram(poem)
+    for poem in poems:
+        bigramDictForEachPoem.append(bigram(poem))
+    return unigramDictForEachPoem, bigramDictForEachPoem
+
+# return the list: unigram value of the input word in all of the poets files
+def unigramCalculator(unigramDictForEachPoem, word):
+    numberOfWords = list()
+    numberOfRepetation = [0,0,0]
+    for i in range(len(unigramDictForEachPoem)):
+        numberOfWords.append(len(unigramDictForEachPoem[i]))
+        # print("fuck: ", numberOfWords)
+        try:
+            print(unigramDictForEachPoem[i][word])
+            print(numberOfWords[i])
+            numberOfRepetation[i] = unigramDictForEachPoem[i][word] / numberOfWords[i]
+        except:
+            numberOfRepetation[i] = 0
+    # print(numberOfRepetation)
+    return numberOfRepetation
+
+
+def bigramCalculator(bigramDictForEachPoem,unigramDictForEachPoem, word, pastWord, position):
+    numberOfLinesOfEachPoem = [9000, 7700, 8000]
+    numberOfRepetation = [0, 0, 0]
+    for i in range(len(bigramDictForEachPoem)):
+        # print("i: ", i)
+        try:
+            if position is 's':
+                numberOfRepetation[i] = bigramDictForEachPoem[i][word]['s'] / numberOfLinesOfEachPoem[i]
+            elif position is 'e':
+                numberOfRepetation[i] = bigramDictForEachPoem[i][word]['e'] / numberOfLinesOfEachPoem[i]
+            else:
+                # print("sorat: ", bigramDictForEachPoem[i][word][pastWord])
+                # print("makhraj: ", unigramDictForEachPoem[i][pastWord])
+                numberOfRepetation[i] = bigramDictForEachPoem[i][word][pastWord] / unigramDictForEachPoem[i][pastWord]
+        except:
+            numberOfRepetation[i] = 0
+
+    # print(numberOfRepetation)
+    return numberOfRepetation
+
+
+def test(unigramDictForEachPoem, bigramDictForEachPoem):
+    l1 = 0.3333
+    l2 = 0.3333
+    l3 = 0.3333
+    e = 0.0000001
+    path = "./test_set/"
+    file = "test_file.txt"
+    poems = extractInputFile(file, path)
+    ferdowsiSize = 9000
+    hafezSize = 7700
+    molaviSize = 8000
+    i = 0
+    bigramValueOfThisWordForEachPoet = [0,0,0]
+    for line in poems:
+        print(line)
+        words = line.split()
+        poetOfThisPoem = words[0]
+        for i in range(len(words)):
+            if not i == 0:
+                unigramValueOfThisWordForEachPoet = unigramCalculator(unigramDictForEachPoem, words[i])
+                print("word[i]: ", words[i])
+                if i == 1:
+                    print("word[i-1]: ", "f")
+                else:
+                    print("word[i-1]: ", words[i - 1])
+                if i == 1:
+                    bigramValueOfThisWordForEachPoet = bigramCalculator(bigramDictForEachPoem, unigramDictForEachPoem, words[i], "f", 's')
+                elif i == len(words) - 1:
+                    bigramValueOfThisWordForEachPoet = bigramCalculator(bigramDictForEachPoem, unigramDictForEachPoem, words[i], words[i-1], 'e')
+                else:
+                    bigramValueOfThisWordForEachPoet = bigramCalculator(bigramDictForEachPoem, unigramDictForEachPoem, words[i], words[i-1], 'm')
+                print(unigramValueOfThisWordForEachPoet)
+                print(bigramValueOfThisWordForEachPoet)
+
+
+        i += 1
+        if i == 10:
+            return
+
+
+
+def main():
+    unigramDictForEachPoem, bigramDictForEachPoem = train()
+    test(unigramDictForEachPoem, bigramDictForEachPoem)
+
 
 
 
 
 main()
+
+
+# for bigramDict in bigramDictForEachPoem:
+    #         i = 0
+    #         print("i: ", i)
+    #         for key, value in bigramDict.items():
+    #             print(key)
+    #             print(value)
+    #             print("********")
+    #             i += 1
+    #             if i == 10:
+    #                 break
+    #         print(len(bigramDict))
