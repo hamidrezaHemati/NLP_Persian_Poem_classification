@@ -130,10 +130,13 @@ def bigramCalculator(bigramDictForEachPoem,unigramDictForEachPoem, word, pastWor
 
 # return the biggest number in back off list
 def biggestNumber(list):
-    max = list.max()
+    print(list)
+    maximum = max(list)
+    print("max: ", maximum)
     for i in range(len(list)):
-        if max == list[i]:
-            return i
+        if maximum == list[i]:
+            print("jayegah: ", i+1)
+            return i+1
 
 
 def test(unigramDictForEachPoem, bigramDictForEachPoem):
@@ -148,10 +151,12 @@ def test(unigramDictForEachPoem, bigramDictForEachPoem):
     hafezSize = 7700
     molaviSize = 8000
     i = 0
+    correctGuessedPoet = 0
+    count = 0
     for line in poems:
         print(line)
         words = line.split()
-        poetOfThisPoem = words[0]
+        poetOfThisPoem = int(words[0])
         backOff = [1.0, 1.0, 1.0]
         for i in range(len(words)):
             if not i == 0:
@@ -171,13 +176,13 @@ def test(unigramDictForEachPoem, bigramDictForEachPoem):
                 # print(bigramValueOfThisWordForEachPoet)
                 for i in range(len(backOff)):
                     backOff[i] *= ((l3 * bigramValueOfThisWordForEachPoet[i]) + (l2 * unigramValueOfThisWordForEachPoet[i]) + (l1 * e))
-        print("each poet probability: ", backOff)
+        print("count: ", count)
+        count += 1
+        if biggestNumber(backOff) == poetOfThisPoem:
+            correctGuessedPoet += 1
 
-
-
-        i += 1
-        if i == 10:
-            return
+    correctPercentage = (correctGuessedPoet/count) * 100
+    print("percentage: ", correctPercentage, "%")
 
 
 
