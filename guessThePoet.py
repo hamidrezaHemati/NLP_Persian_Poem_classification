@@ -20,7 +20,7 @@ def pruningNotImportantWord(dictionary):
     return dictionary
 
 
-def extractUnigram(poem, pruningNedded):
+def unigram(poem, pruningNedded):
     unigramDict = dict()
     for line in poem:
         line = line.strip()
@@ -37,6 +37,37 @@ def extractUnigram(poem, pruningNedded):
         return unigramDict
 
 
+def bigram(poem):
+    bigramDict = dict()
+    for line in poem:
+        # print(line)
+        words = line.split()
+        # print(words)
+        for i in range(len(words)):
+            if words[i] not in bigramDict:
+                bigramDict[words[i]] = dict()
+                bigramDict.setdefault(words[i], {})['s'] = 0
+                bigramDict.setdefault(words[i], {})['e'] = 0
+            if i == 0:
+                # start of the poem
+                bigramDict[words[i]]['s'] += 1
+            else:
+                if i == len(words) - 1:
+                    # end of the poem
+                    bigramDict[words[i]]['e'] += 1
+                if words[i-1] not in bigramDict[words[i]]:
+                    bigramDict.setdefault(words[i], {})[words[i-1]] = 1
+                else:
+                    bigramDict[words[i]][words[i-1]] += 1
+
+    print(len(bigramDict))
+    for key, value in bigramDict.items():
+        print(key)
+        print(value)
+        print("********")
+
+
+
 
 def main():
     poets = ["ferdowsi_train.txt", "hafez_train.txt", "molavi_train.txt"]
@@ -50,9 +81,15 @@ def main():
 
     unigramDictForEachPoem = list()
     for poem in poems:
-        unigramDictForEachPoem.append(extractUnigram(poem, True))
+        unigramDictForEachPoem.append(unigram(poem, True))
     for unigramDict in unigramDictForEachPoem:
         print(len(unigramDict))
+
+    bigramForEachPoem = list()
+    bigram(poems[0])
+    # for poem in poems:
+    #     bigram(poem)
+
 
 
 
