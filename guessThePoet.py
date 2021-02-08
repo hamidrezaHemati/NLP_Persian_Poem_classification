@@ -14,14 +14,20 @@ def extractInputFile(file, path):
 
 
 def extractUnigram(poem):
+    unigramDict = dict()
     for line in poem:
-        print(line)
+        line = line.strip()
+        words = line.split()
+        for word in words:
+            if word in unigramDict:
+                unigramDict[word] += 1
+            else:
+                unigramDict[word] = 1
+
+    return unigramDict
 
 
 def main():
-    # ferdosi = "ferdowsi_train.txt"
-    # hafez = "hafez_train.txt"
-    # molavi = "molavi_train.txt"
     poets = ["ferdowsi_train.txt", "hafez_train.txt", "molavi_train.txt"]
     print(poets)
     trainFilePath = "./train_set/"
@@ -30,7 +36,9 @@ def main():
         # extractInputFile(file, trainFilePath)
         poems.append(extractInputFile(file, trainFilePath))
 
-    extractUnigram(poems[0])
+    unigramDict = extractUnigram(poems[0])
+    for key in list(unigramDict.keys()):
+        print(key, ":", unigramDict[key])
 
 
 main()
