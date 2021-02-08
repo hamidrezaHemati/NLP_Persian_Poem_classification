@@ -98,8 +98,8 @@ def unigramCalculator(unigramDictForEachPoem, word):
         numberOfWords.append(len(unigramDictForEachPoem[i]))
         # print("fuck: ", numberOfWords)
         try:
-            print(unigramDictForEachPoem[i][word])
-            print(numberOfWords[i])
+            # print(unigramDictForEachPoem[i][word])
+            # print(numberOfWords[i])
             numberOfRepetation[i] = unigramDictForEachPoem[i][word] / numberOfWords[i]
         except:
             numberOfRepetation[i] = 0
@@ -140,27 +140,31 @@ def test(unigramDictForEachPoem, bigramDictForEachPoem):
     hafezSize = 7700
     molaviSize = 8000
     i = 0
-    bigramValueOfThisWordForEachPoet = [0,0,0]
     for line in poems:
         print(line)
         words = line.split()
         poetOfThisPoem = words[0]
+        backOff = [1.0, 1.0, 1.0]
         for i in range(len(words)):
             if not i == 0:
                 unigramValueOfThisWordForEachPoet = unigramCalculator(unigramDictForEachPoem, words[i])
-                print("word[i]: ", words[i])
-                if i == 1:
-                    print("word[i-1]: ", "f")
-                else:
-                    print("word[i-1]: ", words[i - 1])
+                # print("word[i]: ", words[i])
+                # if i == 1:
+                #     print("word[i-1]: ", "f")
+                # else:
+                #     print("word[i-1]: ", words[i - 1])
                 if i == 1:
                     bigramValueOfThisWordForEachPoet = bigramCalculator(bigramDictForEachPoem, unigramDictForEachPoem, words[i], "f", 's')
                 elif i == len(words) - 1:
                     bigramValueOfThisWordForEachPoet = bigramCalculator(bigramDictForEachPoem, unigramDictForEachPoem, words[i], words[i-1], 'e')
                 else:
                     bigramValueOfThisWordForEachPoet = bigramCalculator(bigramDictForEachPoem, unigramDictForEachPoem, words[i], words[i-1], 'm')
-                print(unigramValueOfThisWordForEachPoet)
-                print(bigramValueOfThisWordForEachPoet)
+                # print(unigramValueOfThisWordForEachPoet)
+                # print(bigramValueOfThisWordForEachPoet)
+                for i in range(len(backOff)):
+                    backOff[i] *= ((l3 * bigramValueOfThisWordForEachPoet[i]) + (l2 * unigramValueOfThisWordForEachPoet[i]) + (l1 * e))
+        print("each poet probability: ", backOff)
+
 
 
         i += 1
