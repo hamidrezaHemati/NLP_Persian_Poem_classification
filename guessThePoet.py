@@ -35,10 +35,13 @@ def main():
     for file in poets:
         # extractInputFile(file, trainFilePath)
         poems.append(extractInputFile(file, trainFilePath))
-
-    unigramDict = extractUnigram(poems[0])
-    for key in list(unigramDict.keys()):
-        print(key, ":", unigramDict[key])
+    unigramDictForEachPoem = list()
+    for poem in poems:
+        unigramDictForEachPoem.append(extractUnigram(poem))
+    for unigramDict in unigramDictForEachPoem:
+        print(len(unigramDict))
+        # for key in list(unigramDict.keys()):
+        #     print(key, ":", unigramDict[key])
 
 
 main()
