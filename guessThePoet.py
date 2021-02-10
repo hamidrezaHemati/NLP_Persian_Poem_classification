@@ -85,10 +85,11 @@ def train():
     #     print(len(unigramDict))
 
     bigramDictForEachPoem = list()
-    bigram(poems[0])
+    # bigram(poems[0])
     for poem in poems:
         bigramDictForEachPoem.append(bigram(poem))
     return unigramDictForEachPoem, bigramDictForEachPoem
+
 
 # return the list: unigram value of the input word in all of the poets files
 def unigramCalculator(unigramDictForEachPoem, word):
@@ -149,7 +150,7 @@ def test(unigramDictForEachPoem, bigramDictForEachPoem):
     l1 = 0.1
     l2 = 0.2
     l3 = 0.7
-    e = 1
+    e = 1e-6
     path = "./test_set/"
     file = "test_file.txt"
     poems = extractInputFile(file, path)
@@ -195,22 +196,48 @@ def test(unigramDictForEachPoem, bigramDictForEachPoem):
     print("percentage: ", correctPercentage, "%")
 
 
+def testWithManualPoet(unigramDictForEachPoem, bigramDictForEachPoem):
+    l1 = 0.1
+    l2 = 0.2
+    l3 = 0.7
+    e = 1e-6
+    path = "./test_set/"
+    file = "manual_test_file.txt"
+    line = extractInputFile(file, path)
+    line = line[0]
+    print("شعر: ", line)
+    words = line.split()
+    backOff = [1.0, 1.0, 1.0]
+    for i in range(len(words)):
+        unigramValueOfThisWordForEachPoet = unigramCalculator(unigramDictForEachPoem, words[i])
+        if i == 0:
+            bigramValueOfThisWordForEachPoet = bigramCalculator(bigramDictForEachPoem, unigramDictForEachPoem,
+                                                                words[i], "f", 's')
+        elif i == len(words) - 1:
+            bigramValueOfThisWordForEachPoet = bigramCalculator(bigramDictForEachPoem, unigramDictForEachPoem,
+                                                                words[i], words[i - 1], 'e')
+        else:
+            bigramValueOfThisWordForEachPoet = bigramCalculator(bigramDictForEachPoem, unigramDictForEachPoem,
+                                                                words[i], words[i - 1], 'm')
+        for i in range(len(backOff)):
+            backOff[i] *= ((l3 * bigramValueOfThisWordForEachPoet[i]) + (
+                    l2 * unigramValueOfThisWordForEachPoet[i]) + (l1 * e))
+
+    print()
+    print()
+    if biggestNumber(backOff) is 1:
+        print("شاعر: ", "ابولقاسم فردوسی")
+    elif biggestNumber(backOff) is 2:
+        print("شاعر: ", "حافظ")
+    elif biggestNumber(backOff) is 3:
+        print("شاعر: ", "مولوی")
+    else:
+        print("i can't guess the poet")
+
+
 def main():
     unigramDictForEachPoem, bigramDictForEachPoem = train()
-    test(unigramDictForEachPoem, bigramDictForEachPoem)
-
+    # test(unigramDictForEachPoem, bigramDictForEachPoem)
+    testWithManualPoet(unigramDictForEachPoem, bigramDictForEachPoem)
 
 main()
-
-
-# for bigramDict in bigramDictForEachPoem:
-    #         i = 0
-    #         print("i: ", i)
-    #         for key, value in bigramDict.items():
-    #             print(key)
-    #             print(value)
-    #             print("********")
-    #             i += 1
-    #             if i == 10:
-    #                 break
-    #         print(len(bigramDict))
