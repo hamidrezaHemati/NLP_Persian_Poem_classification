@@ -19,10 +19,12 @@ Parameter tuning was done on the coefficients of the backoff model. According to
 2. or if you want ot just test the program with one poem at a time, add the poem at the manualt_test_file.txt
 3. run main.py (if you want to test using test_file comment testWithManualPoet method in the main and if you want to test using manual comment test method in main)
 
+   ![image](https://github.com/hamidrezaHemati/who-is-the-poet/assets/35847115/6df64d21-93a6-43db-9ae6-06165d4b86af)
+
 ## How it works
 This code uses some train sets to learn the n-grams (n=1, 2). These train sets each include the poems from a specific poet. Then the code uses these n-grams in a back-off model to predict the poets of each poem. It also provides some accuracy for the model.
 Results and Conclusion
 The code managed to predict almost 87% of the poets correctly.
 
-![image](https://github.com/hamidrezaHemati/who-is-the-poet/assets/35847115/6df64d21-93a6-43db-9ae6-06165d4b86af)
+![image](https://github.com/hamidrezaHemati/who-is-the-poet/assets/35847115/b9daa08f-2a0d-4ff5-9b84-dedee4886e9a)
 
